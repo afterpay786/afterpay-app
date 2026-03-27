@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>AFTER PAY - Download App</title>
+  <meta name="description" content="Pakistan's #1 mobile phone marketplace. 146+ phones from top brands. Buy Now Pay Later, Free Delivery & Best Prices Guaranteed!">
+  <meta property="og:title" content="AFTER PAY - Buy Now Pay Later">
+  <meta property="og:description" content="Pakistan's #1 mobile phone marketplace. 146+ phones, Buy Now Pay Later, Free Delivery & Best Prices!">
+  <meta property="og:image" content="{{BASE_URL}}/share-banner.png">
+  <meta property="og:image:width" content="1280">
+  <meta property="og:image:height" content="720">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{BASE_URL}}/download">
+  <meta property="og:site_name" content="AFTER PAY">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="AFTER PAY - Buy Now Pay Later">
+  <meta name="twitter:description" content="Pakistan's #1 mobile phone marketplace. 146+ phones, Free Delivery & Best Prices!">
+  <meta name="twitter:image" content="{{BASE_URL}}/share-banner.png">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%234EA97A' rx='20' width='100' height='100'/%3E%3Ctext x='50' y='62' font-size='40' text-anchor='middle' fill='white' font-weight='bold'%3EAP%3C/text%3E%3C/svg%3E">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #4EA97A 0%, #3D8B63 50%, #2D6E4E 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .card {
+      background: white;
+      border-radius: 24px;
+      max-width: 420px;
+      width: 100%;
+      padding: 40px 32px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+      text-align: center;
+    }
+    .logo-area {
+      margin-bottom: 24px;
+    }
+    .logo-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: #4EA97A;
+      padding: 12px 24px;
+      border-radius: 14px;
+      margin-bottom: 8px;
+    }
+    .logo-badge span {
+      color: white;
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: 3px;
+    }
+    .logo-badge .bird {
+      font-size: 32px;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+    }
+    .tagline {
+      color: #666;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 1px;
+    }
+    h2 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.5;
+      margin-bottom: 28px;
+    }
+    .features {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .feature {
+      background: #f8faf9;
+      border: 1px solid #e8f0ec;
+      border-radius: 12px;
+      padding: 14px 10px;
+      text-align: center;
+    }
+    .feature .icon { font-size: 24px; margin-bottom: 6px; }
+    .feature .label { font-size: 11px; font-weight: 600; color: #333; }
+    .download-btn {
+      display: block;
+      width: 100%;
+      background: linear-gradient(135deg, #4EA97A, #3D8B63);
+      color: white;
+      border: none;
+      padding: 16px;
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      margin-bottom: 12px;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 4px 14px rgba(78,169,122,0.4);
+    }
+    .download-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(78,169,122,0.5);
+    }
+    .download-btn .btn-sub {
+      display: block;
+      font-size: 11px;
+      font-weight: 400;
+      opacity: 0.85;
+      margin-top: 4px;
+    }
+    .expo-btn {
+      display: block;
+      width: 100%;
+      background: #1a1a2e;
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      margin-bottom: 20px;
+      transition: transform 0.15s;
+    }
+    .expo-btn:hover { transform: translateY(-2px); }
+    .steps {
+      text-align: left;
+      background: #f8faf9;
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .steps h3 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 12px;
+    }
+    .step {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+    .step:last-child { margin-bottom: 0; }
+    .step-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 12px;
+      background: #4EA97A;
+      color: white;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .step-text {
+      font-size: 13px;
+      color: #555;
+      line-height: 1.4;
+    }
+    .step-text b { color: #333; }
+    .footer {
+      font-size: 11px;
+      color: #999;
+      padding-top: 16px;
+      border-top: 1px solid #eee;
+    }
+    .footer a { color: #4EA97A; text-decoration: none; font-weight: 600; }
+    .whatsapp-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #25D366;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo-area">
+      <div class="logo-badge">
+        <span>AFTER PAY</span>
+        <span class="bird">🐦</span>
+      </div>
+      <div class="tagline">BUY NOW PAY LATER</div>
+    </div>
+
+    <h2>Get the AFTER PAY App</h2>
+    <p class="subtitle">Shop the latest mobile phones from top brands at the best prices in Pakistan. Easy installments & fast delivery!</p>
+
+    <div class="features">
+      <div class="feature">
+        <div class="icon">📱</div>
+        <div class="label">146+ Phones</div>
+      </div>
+      <div class="feature">
+        <div class="icon">💳</div>
+        <div class="label">Buy Now Pay Later</div>
+      </div>
+      <div class="feature">
+        <div class="icon">🚚</div>
+        <div class="label">Free Delivery</div>
+      </div>
+      <div class="feature">
+        <div class="icon">✅</div>
+        <div class="label">PTA Approved</div>
+      </div>
+    </div>
+
+    <a class="download-btn" id="openAppBtn" href="#">
+      📲 Open AFTER PAY App
+      <span class="btn-sub">Opens directly in Expo Go</span>
+    </a>
+
+    <a class="expo-btn" href="https://apps.apple.com/app/expo-go/id982107779" target="_blank">
+      📥 Get Expo Go (iPhone)
+    </a>
+    <a class="expo-btn" href="https://play.google.com/store/apps/details?id=host.exp.exponent" target="_blank" style="background:#3D8B63;">
+      📥 Get Expo Go (Android)
+    </a>
+
+    <div class="steps">
+      <h3>📋 How to Install:</h3>
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text">Download <b>Expo Go</b> from App Store or Play Store</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text">Open the <b>"Open AFTER PAY App"</b> button above</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text">The app will launch in Expo Go - start shopping!</div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>AFTER PAY &copy; 2026 | <a href="mailto:afterpay786@gmail.com">afterpay786@gmail.com</a></p>
+      <a class="whatsapp-link" href="https://wa.me/923261605570" target="_blank">
+        💬 Chat on WhatsApp
+      </a>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      var host = window.location.host;
+      var hostname = window.location.hostname;
+      var expoUrl = 'exp://' + hostname;
+      document.getElementById('openAppBtn').href = expoUrl;
+
+      if (window.location.pathname !== '/download') {
+        window.history.replaceState(null, '', '/download');
+      }
+
+      var PAGE_VERSION = '{{CACHE_BUST}}';
+      function checkForUpdate() {
+        try {
+          var xhr = new XMLHttpRequest();
+          xhr.open('GET', '/api/version?t=' + Date.now(), true);
+          xhr.setRequestHeader('Cache-Control', 'no-cache, no-store');
+          xhr.setRequestHeader('Pragma', 'no-cache');
+          xhr.onload = function() {
+            if (xhr.status === 200) {
+              try {
+                var data = JSON.parse(xhr.responseText);
+                if (data.version && data.version !== PAGE_VERSION) {
+                  window.location.href = '/download?v=' + Date.now();
+                }
+              } catch(e) {}
+            }
+          };
+          xhr.send();
+        } catch(e) {}
+      }
+
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+          registrations.forEach(function(registration) {
+            registration.unregister();
+          });
+        });
+        if (typeof caches !== 'undefined') {
+          caches.keys().then(function(names) {
+            names.forEach(function(name) { caches.delete(name); });
+          });
+        }
+      }
+
+      setTimeout(checkForUpdate, 3000);
+      setInterval(checkForUpdate, 300000);
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AFTER PAY - Admin Dashboard</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f0f2f5;color:#1a1a2e;min-height:100vh}
+.login-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:1000}
+.login-card{background:#fff;border-radius:16px;padding:40px;width:380px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,0.15)}
+.login-card h2{text-align:center;color:#4EA97A;margin-bottom:8px;font-size:24px}
+.login-card p{text-align:center;color:#666;margin-bottom:24px;font-size:14px}
+.login-card input{width:100%;padding:12px 16px;border:2px solid #e0e0e0;border-radius:10px;font-size:15px;outline:none;transition:border .2s}
+.login-card input:focus{border-color:#4EA97A}
+.login-card button{width:100%;padding:12px;background:#4EA97A;color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer;margin-top:16px;transition:background .2s}
+.login-card button:hover{background:#3d8a63}
+.login-error{color:#e53935;text-align:center;margin-top:12px;font-size:13px;display:none}
+.logo-icon{text-align:center;font-size:48px;margin-bottom:16px}
+
+.topbar{background:#4EA97A;color:#fff;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+.topbar h1{font-size:20px;font-weight:700;display:flex;align-items:center;gap:8px}
+.topbar h1 span{font-size:12px;font-weight:400;background:rgba(255,255,255,0.2);padding:2px 8px;border-radius:4px}
+.topbar-actions{display:flex;align-items:center;gap:12px}
+.topbar button{background:rgba(255,255,255,0.15);color:#fff;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:13px;transition:background .2s}
+.topbar button:hover{background:rgba(255,255,255,0.3)}
+
+.dashboard{max-width:1280px;margin:0 auto;padding:20px}
+
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px}
+.stat-card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
+.stat-card .stat-label{font-size:13px;color:#888;margin-bottom:4px}
+.stat-card .stat-value{font-size:28px;font-weight:700;color:#1a1a2e}
+.stat-card .stat-value.green{color:#4EA97A}
+.stat-card .stat-value.blue{color:#2196F3}
+.stat-card .stat-value.orange{color:#FF9800}
+.stat-card .stat-value.red{color:#F44336}
+
+.controls{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;align-items:center}
+.search-box{flex:1;min-width:220px;position:relative}
+.search-box input{width:100%;padding:10px 16px 10px 40px;border:2px solid #e0e0e0;border-radius:10px;font-size:14px;outline:none;transition:border .2s}
+.search-box input:focus{border-color:#4EA97A}
+.search-box svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#aaa}
+.filter-pills{display:flex;gap:8px;flex-wrap:wrap}
+.pill{padding:8px 16px;border-radius:20px;border:1.5px solid #e0e0e0;background:#fff;cursor:pointer;font-size:13px;font-weight:500;transition:all .2s;white-space:nowrap}
+.pill:hover{border-color:#4EA97A;color:#4EA97A}
+.pill.active{background:#4EA97A;color:#fff;border-color:#4EA97A}
+.pill .count{background:rgba(0,0,0,0.08);padding:1px 6px;border-radius:10px;margin-left:4px;font-size:11px}
+.pill.active .count{background:rgba(255,255,255,0.3)}
+
+.orders-table{background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,0.06);overflow:hidden}
+.orders-table table{width:100%;border-collapse:collapse}
+.orders-table th{background:#f8f9fa;padding:12px 16px;text-align:left;font-size:12px;color:#888;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid #eee}
+.orders-table td{padding:14px 16px;border-bottom:1px solid #f0f0f0;font-size:14px;vertical-align:middle}
+.orders-table tr:hover{background:#f9fffe}
+.orders-table tr{cursor:pointer;transition:background .15s}
+.order-id{font-weight:600;color:#4EA97A}
+.customer-info{display:flex;flex-direction:column;gap:2px}
+.customer-info .name{font-weight:500}
+.customer-info .phone{font-size:12px;color:#888}
+.items-preview{font-size:13px;color:#555;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.price{font-weight:600}
+.badge{display:inline-block;padding:4px 10px;border-radius:6px;font-size:12px;font-weight:600;text-transform:capitalize}
+.badge-confirmed{background:#E8F5E9;color:#2E7D32}
+.badge-processing{background:#E3F2FD;color:#1565C0}
+.badge-shipped{background:#FFF3E0;color:#E65100}
+.badge-delivered{background:#F3E5F5;color:#7B1FA2}
+.badge-cancelled{background:#FFEBEE;color:#C62828}
+.payment-badge{display:inline-block;padding:3px 8px;border-radius:4px;font-size:11px;background:#f0f0f0;color:#555}
+
+.pagination{display:flex;justify-content:space-between;align-items:center;padding:16px;border-top:1px solid #eee}
+.pagination span{font-size:13px;color:#888}
+.pagination-btns{display:flex;gap:8px}
+.pagination-btns button{padding:6px 14px;border:1px solid #ddd;background:#fff;border-radius:6px;cursor:pointer;font-size:13px}
+.pagination-btns button:hover{background:#f5f5f5}
+.pagination-btns button:disabled{opacity:0.4;cursor:not-allowed}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:flex-start;justify-content:center;z-index:100;padding-top:60px;overflow-y:auto}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:16px;width:640px;max-width:92vw;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.2);animation:slideUp .25s ease}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-header{display:flex;justify-content:space-between;align-items:center;padding:20px 24px;border-bottom:1px solid #eee;position:sticky;top:0;background:#fff;z-index:1}
+.modal-header h3{font-size:18px;display:flex;align-items:center;gap:8px}
+.modal-close{background:none;border:none;font-size:24px;cursor:pointer;color:#888;padding:4px 8px;border-radius:6px}
+.modal-close:hover{background:#f0f0f0}
+.modal-body{padding:24px}
+.detail-section{margin-bottom:24px}
+.detail-section h4{font-size:14px;color:#888;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.detail-item{display:flex;flex-direction:column;gap:2px}
+.detail-item label{font-size:12px;color:#aaa}
+.detail-item span{font-size:14px;font-weight:500}
+.status-select{padding:8px 12px;border:2px solid #4EA97A;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;background:#f0faf5;color:#2E7D32;outline:none}
+.status-select option{font-weight:normal}
+.item-row{display:flex;align-items:center;gap:12px;padding:10px;background:#f8f9fa;border-radius:8px;margin-bottom:8px}
+.item-row img{width:48px;height:48px;object-fit:contain;border-radius:6px;background:#fff}
+.item-details{flex:1}
+.item-details .item-name{font-weight:500;font-size:13px}
+.item-details .item-meta{font-size:12px;color:#888}
+.item-price{font-weight:600;font-size:14px;color:#4EA97A}
+
+.summary-row{display:flex;justify-content:space-between;padding:6px 0;font-size:14px}
+.summary-row.total{border-top:2px solid #eee;margin-top:8px;padding-top:12px;font-weight:700;font-size:16px}
+
+.bnpl-docs-section{background:#f0faf5;border-radius:12px;padding:16px;margin-top:16px;border:1px solid #d1ede0}
+.bnpl-docs-title{font-size:15px;font-weight:700;color:#2E7D32;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.bnpl-doc-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.bnpl-doc-card{background:#fff;border-radius:10px;padding:12px;border:1px solid #e0e0e0;position:relative}
+.bnpl-doc-card .doc-label{font-size:12px;font-weight:600;color:#555;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.3px}
+.bnpl-doc-card .doc-status{font-size:11px;color:#999;margin-bottom:6px}
+.bnpl-doc-card .doc-status.uploaded{color:#2E7D32;font-weight:600}
+.bnpl-doc-card img{width:100%;height:120px;object-fit:cover;border-radius:6px;cursor:pointer;border:1px solid #eee}
+.bnpl-doc-card .doc-actions{display:flex;gap:6px;margin-top:8px}
+.bnpl-doc-card .doc-btn{padding:5px 10px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;border:none;display:flex;align-items:center;gap:4px}
+.bnpl-doc-card .doc-btn.download{background:#4EA97A;color:#fff}
+.bnpl-doc-card .doc-btn.view{background:#E3F2FD;color:#1565C0}
+.bnpl-doc-card .doc-btn:hover{opacity:0.85}
+
+.empty-state{text-align:center;padding:60px 20px;color:#aaa}
+.empty-state svg{margin-bottom:16px}
+.empty-state p{font-size:15px}
+
+.loading{text-align:center;padding:40px;color:#aaa}
+.loading .spinner{display:inline-block;width:32px;height:32px;border:3px solid #e0e0e0;border-top:3px solid #4EA97A;border-radius:50%;animation:spin .8s linear infinite;margin-bottom:8px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:768px){
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+  .controls{flex-direction:column}
+  .search-box{min-width:100%}
+  .detail-grid{grid-template-columns:1fr}
+  .orders-table{overflow-x:auto}
+  .orders-table table{min-width:700px}
+  .dashboard{padding:12px}
+}
+</style>
+</head>
+<body>
+<div id="loginOverlay" class="login-overlay">
+  <div class="login-card">
+    <div class="logo-icon">📱</div>
+    <h2>AFTER PAY Admin</h2>
+    <p>Enter your admin password to continue</p>
+    <input type="password" id="loginPassword" placeholder="Admin password" onkeydown="if(event.key==='Enter')doLogin()">
+    <button onclick="doLogin()">Sign In</button>
+    <div id="loginError" class="login-error">Invalid password. Please try again.</div>
+  </div>
+</div>
+
+<div id="app" style="display:none">
+<div class="topbar">
+  <h1>📱 AFTER PAY <span>Admin Panel</span></h1>
+  <div class="topbar-actions">
+    <button onclick="loadStats();loadOrders()">↻ Refresh</button>
+    <button onclick="logout()">Logout</button>
+  </div>
+</div>
+
+<div class="dashboard">
+  <div class="stats-row" id="statsRow">
+    <div class="stat-card"><div class="stat-label">Total Orders</div><div class="stat-value" id="statTotal">-</div></div>
+    <div class="stat-card"><div class="stat-label">Total Revenue</div><div class="stat-value green" id="statRevenue">-</div></div>
+    <div class="stat-card"><div class="stat-label">Pending</div><div class="stat-value orange" id="statPending">-</div></div>
+    <div class="stat-card"><div class="stat-label">Delivered</div><div class="stat-value blue" id="statDelivered">-</div></div>
+  </div>
+
+  <div class="controls">
+    <div class="search-box">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="text" id="searchInput" placeholder="Search by order ID, customer name, phone, city..." oninput="debounceSearch()">
+    </div>
+    <div class="filter-pills" id="filterPills">
+      <div class="pill active" data-status="all" onclick="setFilter('all')">All</div>
+      <div class="pill" data-status="confirmed" onclick="setFilter('confirmed')">Confirmed <span class="count" id="countConfirmed">0</span></div>
+      <div class="pill" data-status="processing" onclick="setFilter('processing')">Processing <span class="count" id="countProcessing">0</span></div>
+      <div class="pill" data-status="shipped" onclick="setFilter('shipped')">Shipped <span class="count" id="countShipped">0</span></div>
+      <div class="pill" data-status="delivered" onclick="setFilter('delivered')">Delivered <span class="count" id="countDelivered">0</span></div>
+      <div class="pill" data-status="cancelled" onclick="setFilter('cancelled')">Cancelled <span class="count" id="countCancelled">0</span></div>
+    </div>
+  </div>
+
+  <div class="orders-table" id="ordersContainer">
+    <div class="loading"><div class="spinner"></div><p>Loading orders...</p></div>
+  </div>
+</div>
+</div>
+
+<div class="modal-overlay" id="orderModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Order <span id="modalOrderId" class="order-id"></span></h3>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+let token = localStorage.getItem('ap_admin_token');
+let currentFilter = 'all';
+let currentSearch = '';
+let currentPage = 1;
+let searchTimeout;
+let statsData = {};
+
+if (token) { showApp(); } else { document.getElementById('loginOverlay').style.display = 'flex'; }
+
+let pendingSessionId = null;
+
+async function doLogin() {
+  const pw = document.getElementById('loginPassword').value;
+  const errEl = document.getElementById('loginError');
+  try {
+    const res = await fetch('/api/admin/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: pw }) });
+    const data = await res.json();
+    if (res.ok && data.requiresOTP) {
+      pendingSessionId = data.sessionId;
+      document.querySelector('.login-card').innerHTML = `
+        <div class="logo-icon">🔐</div>
+        <h2>OTP Verification</h2>
+        <p>Enter the 6-digit code sent to your email</p>
+        <input type="text" id="otpInput" placeholder="Enter OTP code" maxlength="6" style="text-align:center;font-size:20px;letter-spacing:8px" onkeydown="if(event.key==='Enter')verifyOTP()">
+        <button onclick="verifyOTP()">Verify & Login</button>
+        <div id="otpError" class="login-error">Invalid or expired OTP code.</div>
+      `;
+      document.getElementById('otpInput').focus();
+    } else if (res.ok && data.token) {
+      token = data.token;
+      localStorage.setItem('ap_admin_token', token);
+      showApp();
+    } else {
+      errEl.style.display = 'block';
+      errEl.textContent = data.error || 'Invalid password. Please try again.';
+    }
+  } catch (e) { errEl.style.display = 'block'; }
+}
+
+async function verifyOTP() {
+  const otp = document.getElementById('otpInput').value.trim();
+  const errEl = document.getElementById('otpError');
+  if (!otp || otp.length !== 6) { errEl.style.display = 'block'; errEl.textContent = 'Please enter a 6-digit code.'; return; }
+  try {
+    const res = await fetch('/api/admin/verify-otp', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sessionId: pendingSessionId, otp }) });
+    const data = await res.json();
+    if (res.ok && data.token) {
+      token = data.token;
+      localStorage.setItem('ap_admin_token', token);
+      showApp();
+    } else {
+      errEl.style.display = 'block';
+      errEl.textContent = data.error || 'Invalid OTP code.';
+    }
+  } catch (e) { errEl.style.display = 'block'; errEl.textContent = 'Verification failed. Please try again.'; }
+}
+
+function showApp() {
+  document.getElementById('loginOverlay').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  loadStats();
+  loadOrders();
+}
+
+function logout() {
+  localStorage.removeItem('ap_admin_token');
+  token = null;
+  location.reload();
+}
+
+function authHeaders() { return { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' }; }
+
+function formatPrice(n) { return 'Rs. ' + Number(n).toLocaleString('en-PK'); }
+function formatDate(d) {
+  const dt = new Date(d);
+  return dt.toLocaleDateString('en-PK', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+
+const paymentLabels = { cod: 'Cash on Delivery', jazzcash: 'JazzCash', easypaisa: 'EasyPaisa', card: 'Credit/Debit Card', bank_transfer: 'Bank Transfer', bnpl: 'Installments (BNPL)' };
+
+async function loadStats() {
+  try {
+    const res = await fetch('/api/admin/stats', { headers: authHeaders() });
+    if (res.status === 401) { logout(); return; }
+    statsData = await res.json();
+    document.getElementById('statTotal').textContent = statsData.totalOrders;
+    document.getElementById('statRevenue').textContent = formatPrice(statsData.totalRevenue);
+    document.getElementById('statPending').textContent = (statsData.statusCounts.confirmed || 0) + (statsData.statusCounts.processing || 0);
+    document.getElementById('statDelivered').textContent = statsData.statusCounts.delivered || 0;
+    document.getElementById('countConfirmed').textContent = statsData.statusCounts.confirmed || 0;
+    document.getElementById('countProcessing').textContent = statsData.statusCounts.processing || 0;
+    document.getElementById('countShipped').textContent = statsData.statusCounts.shipped || 0;
+    document.getElementById('countDelivered').textContent = statsData.statusCounts.delivered || 0;
+    document.getElementById('countCancelled').textContent = statsData.statusCounts.cancelled || 0;
+  } catch (e) { console.error('Stats error', e); }
+}
+
+async function loadOrders() {
+  const container = document.getElementById('ordersContainer');
+  container.innerHTML = '<div class="loading"><div class="spinner"></div><p>Loading orders...</p></div>';
+  try {
+    const params = new URLSearchParams({ page: currentPage, limit: 20 });
+    if (currentFilter !== 'all') params.set('status', currentFilter);
+    if (currentSearch) params.set('search', currentSearch);
+    const res = await fetch('/api/admin/orders?' + params.toString(), { headers: authHeaders() });
+    if (res.status === 401) { logout(); return; }
+    const data = await res.json();
+    renderOrders(data);
+  } catch (e) {
+    container.innerHTML = '<div class="empty-state"><p>Failed to load orders. Please try again.</p></div>';
+  }
+}
+
+function renderOrders(data) {
+  const container = document.getElementById('ordersContainer');
+  if (!data.orders || data.orders.length === 0) {
+    container.innerHTML = '<div class="empty-state"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M8 7h8M8 11h5"/></svg><p>No orders found</p></div>';
+    return;
+  }
+  let html = '<table><thead><tr><th>Order ID</th><th>Customer</th><th>Items</th><th>Total</th><th>Payment</th><th>City</th><th>Status</th><th>Date</th></tr></thead><tbody>';
+  data.orders.forEach(o => {
+    const items = Array.isArray(o.items) ? o.items : [];
+    const itemNames = items.map(i => i.name || i.productName || 'Product').join(', ');
+    html += `<tr onclick="openOrder('${o.id}')">
+      <td class="order-id">${o.id}</td>
+      <td><div class="customer-info"><span class="name">${esc(o.customerName)}</span><span class="phone">${esc(o.customerPhone)}</span></div></td>
+      <td><span class="items-preview">${esc(itemNames) || items.length + ' item(s)'}</span></td>
+      <td class="price">${formatPrice(o.total)}</td>
+      <td><span class="payment-badge">${paymentLabels[o.paymentMethod] || o.paymentMethod}</span></td>
+      <td>${esc(o.deliveryCity)}</td>
+      <td><span class="badge badge-${o.status}">${o.status}</span></td>
+      <td style="font-size:12px;color:#888">${formatDate(o.createdAt)}</td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  html += `<div class="pagination"><span>Showing ${(data.page-1)*20+1}-${Math.min(data.page*20,data.total)} of ${data.total} orders</span><div class="pagination-btns"><button ${data.page<=1?'disabled':''} onclick="goPage(${data.page-1})">← Previous</button><button ${data.page>=data.totalPages?'disabled':''} onclick="goPage(${data.page+1})">Next →</button></div></div>`;
+  container.innerHTML = html;
+}
+
+function esc(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+
+function setFilter(status) {
+  currentFilter = status;
+  currentPage = 1;
+  document.querySelectorAll('.pill').forEach(p => p.classList.toggle('active', p.dataset.status === status));
+  loadOrders();
+}
+
+function debounceSearch() {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => {
+    currentSearch = document.getElementById('searchInput').value.trim();
+    currentPage = 1;
+    loadOrders();
+  }, 300);
+}
+
+function goPage(p) { currentPage = p; loadOrders(); }
+
+async function openOrder(id) {
+  document.getElementById('orderModal').classList.add('open');
+  document.getElementById('modalOrderId').textContent = id;
+  document.getElementById('modalBody').innerHTML = '<div class="loading"><div class="spinner"></div><p>Loading...</p></div>';
+  try {
+    const res = await fetch('/api/admin/orders/' + id, { headers: authHeaders() });
+    const order = await res.json();
+    renderOrderDetail(order);
+  } catch (e) {
+    document.getElementById('modalBody').innerHTML = '<p>Failed to load order details.</p>';
+  }
+}
+
+function renderOrderDetail(o) {
+  const items = Array.isArray(o.items) ? o.items : [];
+  let html = `
+    <div class="detail-section">
+      <h4>Status</h4>
+      <select class="status-select" onchange="updateStatus('${o.id}', this.value)">
+        <option value="confirmed" ${o.status==='confirmed'?'selected':''}>✅ Confirmed</option>
+        <option value="processing" ${o.status==='processing'?'selected':''}>🔄 Processing</option>
+        <option value="shipped" ${o.status==='shipped'?'selected':''}>🚚 Shipped</option>
+        <option value="delivered" ${o.status==='delivered'?'selected':''}>📦 Delivered</option>
+        <option value="cancelled" ${o.status==='cancelled'?'selected':''}>❌ Cancelled</option>
+      </select>
+    </div>
+    <div class="detail-section">
+      <h4>Customer Information</h4>
+      <div class="detail-grid">
+        <div class="detail-item"><label>Full Name</label><span>${esc(o.customerName)}</span></div>
+        <div class="detail-item"><label>Phone</label><span>${esc(o.customerPhone)}</span></div>
+        <div class="detail-item"><label>Email</label><span>${esc(o.customerEmail) || '-'}</span></div>
+        <div class="detail-item"><label>Payment</label><span>${paymentLabels[o.paymentMethod] || o.paymentMethod}</span></div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <h4>Delivery Address</h4>
+      <div class="detail-grid">
+        <div class="detail-item"><label>Address</label><span>${esc(o.deliveryAddress)}</span></div>
+        <div class="detail-item"><label>City</label><span>${esc(o.deliveryCity)}</span></div>
+        <div class="detail-item"><label>Open Parcel</label><span>${o.openParcel ? 'Yes (+Rs. 300)' : 'No'}</span></div>
+        <div class="detail-item"><label>Est. Delivery</label><span>${esc(o.estimatedDelivery)}</span></div>
+      </div>
+      ${o.deliveryNotes ? `<div class="detail-item" style="margin-top:8px"><label>Notes</label><span>${esc(o.deliveryNotes)}</span></div>` : ''}
+    </div>
+    <div class="detail-section">
+      <h4>Order Items (${items.length})</h4>`;
+  items.forEach(item => {
+    const img = item.image || item.images?.[0] || '';
+    const name = item.name || item.productName || 'Product';
+    const qty = item.quantity || 1;
+    const price = item.price || 0;
+    const color = item.selectedColor || item.color || '';
+    const storage = item.selectedStorage || item.storage || '';
+    html += `<div class="item-row">
+      ${img ? `<img src="${esc(img)}" alt="${esc(name)}">` : '<div style="width:48px;height:48px;background:#f0f0f0;border-radius:6px"></div>'}
+      <div class="item-details">
+        <div class="item-name">${esc(name)}</div>
+        <div class="item-meta">Qty: ${qty}${color ? ' · ' + esc(color) : ''}${storage ? ' · ' + esc(storage) : ''}</div>
+      </div>
+      <div class="item-price">${formatPrice(price * qty)}</div>
+    </div>`;
+  });
+  html += `</div>
+    <div class="detail-section">
+      <h4>Order Summary</h4>
+      <div class="summary-row"><span>Subtotal</span><span>${formatPrice(o.subtotal)}</span></div>
+      <div class="summary-row"><span>Delivery Fee</span><span>${formatPrice(o.deliveryFee)}</span></div>
+      <div class="summary-row total"><span>Total</span><span style="color:#4EA97A">${formatPrice(o.total)}</span></div>
+    </div>`;
+
+  if (o.bankTransferInfo) {
+    const bt = o.bankTransferInfo;
+    html += `<div class="detail-section">
+      <h4>Bank Transfer Details</h4>
+      <div class="detail-grid">
+        <div class="detail-item"><label>CNIC</label><span>${esc(bt.cnic || '-')}</span></div>
+        <div class="detail-item"><label>Account Title</label><span>${esc(bt.accountTitle || '-')}</span></div>
+        <div class="detail-item"><label>Account Number</label><span>${esc(bt.accountNumber || '-')}</span></div>
+      </div>`;
+    if (bt.paymentProof) {
+      html += `<div style="margin-top:12px">
+        <div class="doc-label" style="font-size:12px;font-weight:600;color:#555;margin-bottom:6px">Payment Proof</div>
+        <img src="${bt.paymentProof}" style="max-width:100%;max-height:200px;border-radius:8px;cursor:pointer;border:1px solid #eee" onclick="viewFullImage(this.src)">
+        <div style="margin-top:6px"><button class="doc-btn download" onclick="downloadDoc('${bt.paymentProof}','payment-proof-${o.id}.jpg')">⬇ Download</button></div>
+      </div>`;
+    }
+    html += `</div>`;
+  }
+
+  if (o.bnplDocuments) {
+    const docs = o.bnplDocuments;
+    html += `<div class="bnpl-docs-section">
+      <div class="bnpl-docs-title">📋 BNPL Documents</div>
+      <div class="bnpl-doc-grid">`;
+
+    const docList = [
+      { key: 'cnicFront', label: 'CNIC Front' },
+      { key: 'cnicBack', label: 'CNIC Back' },
+      { key: 'tasdeeqApp', label: 'Tasdeeq App' },
+      { key: 'bankCheque', label: 'Bank Cheque' },
+      { key: 'applicationForm', label: 'Application Form' },
+    ];
+
+    docList.forEach(d => {
+      const val = docs[d.key];
+      html += `<div class="bnpl-doc-card">
+        <div class="doc-label">${d.label}</div>`;
+      if (val) {
+        html += `<div class="doc-status uploaded">✅ Uploaded</div>
+          <img src="${val}" onclick="viewFullImage(this.src)">
+          <div class="doc-actions">
+            <button class="doc-btn view" onclick="viewFullImage('${val}')">👁 View</button>
+            <button class="doc-btn download" onclick="downloadDoc('${val}','${d.key}-${o.id}.jpg')">⬇ Download</button>
+          </div>`;
+      } else {
+        html += `<div class="doc-status">❌ Not uploaded</div>`;
+      }
+      html += `</div>`;
+    });
+
+    if (docs.bankStatements && docs.bankStatements.length > 0) {
+      docs.bankStatements.forEach((stmt, i) => {
+        html += `<div class="bnpl-doc-card">
+          <div class="doc-label">Bank Statement ${i+1}</div>
+          <div class="doc-status uploaded">✅ Uploaded</div>
+          <img src="${stmt}" onclick="viewFullImage(this.src)">
+          <div class="doc-actions">
+            <button class="doc-btn view" onclick="viewFullImage('${stmt}')">👁 View</button>
+            <button class="doc-btn download" onclick="downloadDoc('${stmt}','bank-statement-${i+1}-${o.id}.jpg')">⬇ Download</button>
+          </div>
+        </div>`;
+      });
+    }
+
+    html += `</div></div>`;
+  }
+
+  html += `<div class="detail-section">
+      <div class="detail-item"><label>Order Date</label><span>${formatDate(o.createdAt)}</span></div>
+    </div>`;
+  document.getElementById('modalBody').innerHTML = html;
+}
+
+async function updateStatus(id, status) {
+  try {
+    const res = await fetch('/api/admin/orders/' + id + '/status', {
+      method: 'PATCH',
+      headers: authHeaders(),
+      body: JSON.stringify({ status })
+    });
+    if (res.ok) {
+      loadStats();
+      loadOrders();
+    }
+  } catch (e) { alert('Failed to update status'); }
+}
+
+function closeModal() { document.getElementById('orderModal').classList.remove('open'); }
+document.getElementById('orderModal').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
+
+function viewFullImage(src) {
+  const w = window.open('', '_blank');
+  if (w) {
+    w.document.write(`<html><head><title>Document View</title><style>body{margin:0;background:#111;display:flex;align-items:center;justify-content:center;min-height:100vh}img{max-width:95vw;max-height:95vh;object-fit:contain;border-radius:8px}</style></head><body><img src="${src}"></body></html>`);
+    w.document.close();
+  }
+}
+
+function downloadDoc(dataUrl, filename) {
+  const a = document.createElement('a');
+  a.href = dataUrl;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+</script>
+</body>
+</html>

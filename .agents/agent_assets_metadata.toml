@@ -1,0 +1,14 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "EtzeA1RB4-OzZympUf2AH"
+uri = "file://PLAYSTORE_GUIDE.md"
+type = "text"
+title = "AFTER PAY — Google Play Store Submission Guide"
+
+[[outputs]]
+id = "3OhsKv8tJ63RrBGxU1yIP"
+uri = "file://HOW_TO_BUILD_AAB.md"
+type = "text"
+title = "How to Build Your AAB File — Simple 5 Steps"
